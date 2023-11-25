@@ -1,8 +1,12 @@
+import { useSelector } from 'react-redux';
+
 import { lazy } from 'react';
+import propTypes from 'prop-types';
 
 // project imports
 import MainLayout from 'layout/MainLayout';
 import Loadable from 'ui-component/Loadable';
+import { Navigate } from 'react-router';
 
 // dashboard routing
 const DashboardDefault = Loadable(lazy(() => import('views/dashboard/Default')));
@@ -18,10 +22,25 @@ const UtilsTablerIcons = Loadable(lazy(() => import('views/utilities/TablerIcons
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 
 // ==============================|| MAIN ROUTING ||============================== //
+const ProtectedRoute = ({ children }) => {
+  const user = useSelector((state) => state.user);
+
+  const isAuth = user.isLogin;
+  if (!isAuth) return <Navigate to="auth/login" />;
+  return children;
+};
+
+ProtectedRoute.propTypes = {
+  children: propTypes.any
+};
 
 const MainRoutes = {
   path: '/',
-  element: <MainLayout />,
+  element: (
+    <ProtectedRoute>
+      <MainLayout />
+    </ProtectedRoute>
+  ),
   children: [
     {
       path: '/',

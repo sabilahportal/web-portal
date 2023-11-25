@@ -13,6 +13,8 @@ import { store } from 'store';
 import 'assets/scss/style.scss';
 import config from './config';
 
+import firebase from './firebase/index';
+console.log({ firebase });
 // ==============================|| REACT DOM RENDER  ||============================== //
 
 const container = document.getElementById('root');

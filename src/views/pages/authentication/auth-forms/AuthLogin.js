@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -34,15 +35,24 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 import Google from 'assets/images/icons/social-google.svg';
+import { useNavigate } from 'react-router';
+import { useEffect } from 'react';
 
 // ============================|| FIREBASE - LOGIN ||============================ //
-
 const FirebaseLogin = ({ ...others }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const theme = useTheme();
+
   const scriptedRef = useScriptRef();
   const matchDownSM = useMediaQuery(theme.breakpoints.down('md'));
   const customization = useSelector((state) => state.customization);
   const [checked, setChecked] = useState(true);
+
+  useEffect(() => {
+    dispatch({ type: 'LOGOUT', value: null });
+    // navigate('/auth/login', { replace: true });
+  }, []);
 
   const googleHandler = async () => {
     console.error('Login');
@@ -120,8 +130,8 @@ const FirebaseLogin = ({ ...others }) => {
 
       <Formik
         initialValues={{
-          email: 'info@codedthemes.com',
-          password: '123456',
+          email: '',
+          password: '',
           submit: null
         }}
         validationSchema={Yup.object().shape({
@@ -134,6 +144,22 @@ const FirebaseLogin = ({ ...others }) => {
               setStatus({ success: true });
               setSubmitting(false);
             }
+
+            const auth = getAuth();
+            signInWithEmailAndPassword(auth, values.email, values.password)
+              .then((userCredential) => {
+                // Signed in
+                const user = userCredential.user;
+                console.log({ user });
+
+                dispatch({ type: 'LOGIN', value: user });
+                navigate('/', { replace: true });
+              })
+              .catch((error) => {
+                // const errorCode = error.code;
+                // const errorMessage = error.message;
+                console.log({ error });
+              });
           } catch (err) {
             console.error(err);
             if (scriptedRef.current) {

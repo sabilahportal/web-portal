@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -140,6 +141,21 @@ const FirebaseRegister = ({ ...others }) => {
               setStatus({ success: true });
               setSubmitting(false);
             }
+
+            const auth = getAuth();
+            createUserWithEmailAndPassword(auth, values.email, values.password)
+              .then((userCredential) => {
+                // Signed up
+                const user = userCredential.user;
+                // ...
+                console.log({ user });
+              })
+              .catch((error) => {
+                // const errorCode = error.code;
+                // const errorMessage = error.message;
+                console.log({ error });
+                // ..
+              });
           } catch (err) {
             console.error(err);
             if (scriptedRef.current) {
