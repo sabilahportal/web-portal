@@ -1,5 +1,3 @@
-import { useSelector } from 'react-redux';
-
 import { lazy } from 'react';
 import propTypes from 'prop-types';
 
@@ -21,12 +19,14 @@ const UtilsTablerIcons = Loadable(lazy(() => import('views/utilities/TablerIcons
 // sample page routing
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 
+// Administrator
+const AdminUserPage = Loadable(lazy(() => import('views/admin/Users')));
+const AdminRolePage = Loadable(lazy(() => import('views/admin/Roles')));
+
 // ==============================|| MAIN ROUTING ||============================== //
 const ProtectedRoute = ({ children }) => {
-  const user = useSelector((state) => state.user);
-
-  const isAuth = user.isLogin;
-  if (!isAuth) return <Navigate to="auth/login" />;
+  const isLogin = localStorage.getItem('user');
+  if (!isLogin) return <Navigate to="/auth/login" />;
   return children;
 };
 
@@ -52,6 +52,19 @@ const MainRoutes = {
         {
           path: 'default',
           element: <DashboardDefault />
+        }
+      ]
+    },
+    {
+      path: 'admin',
+      children: [
+        {
+          path: '/admin/users',
+          element: <AdminUserPage />
+        },
+        {
+          path: '/admin/roles',
+          element: <AdminRolePage />
         }
       ]
     },

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 // material-ui
@@ -40,7 +40,6 @@ import { useEffect } from 'react';
 
 // ============================|| FIREBASE - LOGIN ||============================ //
 const FirebaseLogin = ({ ...others }) => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const theme = useTheme();
 
@@ -50,8 +49,7 @@ const FirebaseLogin = ({ ...others }) => {
   const [checked, setChecked] = useState(true);
 
   useEffect(() => {
-    dispatch({ type: 'LOGOUT', value: null });
-    // navigate('/auth/login', { replace: true });
+    localStorage.removeItem('user');
   }, []);
 
   const googleHandler = async () => {
@@ -150,9 +148,9 @@ const FirebaseLogin = ({ ...others }) => {
               .then((userCredential) => {
                 // Signed in
                 const user = userCredential.user;
-                console.log({ user });
 
-                dispatch({ type: 'LOGIN', value: user });
+                // dispatch({ type: 'LOGIN', value: user });
+                localStorage.setItem('user', JSON.stringify(user));
                 navigate('/', { replace: true });
               })
               .catch((error) => {
